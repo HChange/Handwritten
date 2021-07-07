@@ -1,3 +1,3 @@
 function abc(num: number) {
-  console.log(num + 7);
+  console.log(num + 8);
 }

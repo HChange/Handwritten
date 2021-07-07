@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
-    "test": "ts-node test.ts",
+    "pre-commit": "lint-staged",
+    "commit-msg": "commitlint -e $GIT_PARAMS",
     "lint": "eslint src/**/*.{ts,js} --fix",
     "prepare": "husky install"
   },
@@ -36,8 +37,7 @@
   },
   "lint-staged": {
     "src/**/*.{ts,js}": [
-      "eslint --cache --fix",
-      "git add"
+      "eslint --cache --fix"
     ]
   }
 }

@@ -1,0 +1,42 @@
+{
+  "name": "handwritten",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "test": "ts-node test.ts",
+    "lint": "eslint src/**/*.{ts,js} --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HChange/Handwritten.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HChange/Handwritten/issues"
+  },
+  "homepage": "https://github.com/HChange/Handwritten#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^12.1.4",
+    "@commitlint/config-conventional": "^12.1.4",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "eslint": "^7.29.0",
+    "eslint-config-alloy": "^4.1.0",
+    "husky": "^7.0.1",
+    "lint-staged": "^10.5.4",
+    "prettier": "^2.3.2",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.5"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,js}": [
+      "eslint --cache --fix",
+      "git add"
+    ]
+  }
+}

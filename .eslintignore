@@ -1,0 +1,9 @@
+node_modules/
+algorithm/
+func/
+
+dist
+*.js
+*.test.*
+*.d.ts
+*.map

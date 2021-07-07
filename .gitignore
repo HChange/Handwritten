@@ -1,0 +1,4 @@
+/node_modules/
+/CONFIG.MD
+dist
+.DS_Store

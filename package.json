@@ -9,7 +9,8 @@
     "pre-commit": "lint-staged",
     "commit-msg": "commitlint -e $GIT_PARAMS",
     "lint": "eslint src/**/*.{ts,js} --fix",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -25,13 +26,16 @@
   "devDependencies": {
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
+    "@types/jest": "^26.0.24",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
     "eslint": "^7.29.0",
     "eslint-config-alloy": "^4.1.0",
     "husky": "^7.0.1",
+    "jest": "^27.0.5",
     "lint-staged": "^10.5.4",
     "prettier": "^2.3.2",
+    "ts-jest": "^27.0.3",
     "ts-node": "^10.0.0",
     "typescript": "^4.3.5"
   },

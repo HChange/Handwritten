@@ -2,3 +2,4 @@
 /CONFIG.MD
 dist
 .DS_Store
+coverage

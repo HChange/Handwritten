@@ -1,5 +1,5 @@
 /node_modules/
-/CONFIG.MD
+/CONFIG.md
 dist
 .DS_Store
 coverage

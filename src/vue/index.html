@@ -104,6 +104,7 @@
         Object.defineProperty(data, key, {
           get: function () {
             Dep.target && dep.subscribe(Dep.target);
+            // console.log(dep.subs);
             return val;
           },
           set: function (newVal) {
@@ -141,14 +142,14 @@
         this.value = this.get();
       }
 
-      Watcher.prototype.get = () => {
+      Watcher.prototype.get = function () {
         Dep.target = this;
         var value = this.vm.data[this.name];
         Dep.target = null;
         return value;
       };
 
-      Watcher.prototype.update = () => {
+      Watcher.prototype.update = function () {
         if (this.node.nodeType === 1) {
           this.node.nodeValue = this.get();
         } else {

@@ -9,8 +9,13 @@
 
   <body>
     <div id="app">
-      用户名：<input type="text" v-model="name" /> 密码：<input type="text" v-model="password" />
-      {{name}} {{password}}
+      用户名：<input type="text" v-model="name" /> 用户名2：<input type="text" v-model="name" /> 密码：<input
+        type="text"
+        v-model="password"
+      />
+      <p>{{name}}</p>
+      {{password}}
+      <!-- <div>{{name}}</div> -->
     </div>
 
     <script>
@@ -20,74 +25,13 @@
         // 完成数据监听
         observe(this.data);
         // 完成对模版解析以及触发订阅
-        var dom = nodeToFragment(document.getElementById(this.id), this);
+        let dom = nodeCopyToFragment(document.getElementById(this.id), this);
         document.getElementById(this.id).appendChild(dom);
       }
 
-      // 把 #id 的所有子节点拷贝到 fragment 上
-      function nodeToFragment(node, vm) {
-        // 创建一个文档碎片
-        var fragment = document.createDocumentFragment();
-        var child;
-        while ((child = node.firstChild)) {
-          // 节点的appendChild方法用于在内容末尾插入节点，如果要插入的节点 已经 在文档中则 先剪切再插入。
-          fragment.appendChild(child);
-        }
-        loopNode(fragment.childNodes, vm);
-        return fragment;
-      }
-
-      function loopNode(nodes, vm) {
-        //此处传入的nodes是一个类数组，将其转化为数组
-        Array.from(nodes).forEach((node) => {
-          compile(node, vm);
-          // 如果node还有子节点，则继续解析
-          if (node.childNodes.length > 0) {
-            loopNode(node.childNodes, vm);
-          }
-        });
-      }
-
-      // 解析模版
-      function compile(node, vm) {
-        // 如果是元素节点
-        if (node.nodeType === 1) {
-          // 获得元素节点上所有的属性，以键值对的方式存储在attr中，attr属于类数组
-          var attr = node.attributes;
-          Array.from(attr).forEach((element) => {
-            if (element.nodeName == 'v-model') {
-              var name = element.nodeValue;
-              // 给带有v-model指令的元素绑定input时间
-              node.addEventListener('input', function (e) {
-                vm.data[name] = e.target.value;
-              });
-              // 初始化带有v-model指令的元素的值
-              node.value = vm.data[name];
-              // 触发订阅
-              new Watcher(vm, node, name);
-            }
-          });
-        }
-        // 正则匹配到文本中有{{}}的文本
-        var reg = /\{\{([^}]*)\}\}/g;
-        var textContent = node.textContent;
-        // 如果是文本节点且文本中带有{{}}的节点
-        if (node.nodeType === 3 && reg.test(textContent)) {
-          // 将文本内容存放在当前节点的自定义属性上
-          node.template = textContent;
-          // 此处node.textContent 和 node.template的文本一样，如果上一步不将文本存储到自定义属性中，那么下次将无法匹配到{{}}。
-          node.textContent = node.template.replace(reg, (_template) => {
-            // 获取数据的key值 {{name}} ===> name
-            var key = _template.slice(2, _template.length - 2);
-            new Watcher(vm, node, key);
-            // 返回对应的值
-            return vm.data[key];
-          });
-        }
-      }
-
+      // 进行数据监听
       function observe(data) {
-        if (typeof data != 'object' || !data) {
+        if (!data || typeof data != 'object') {
           return;
         }
 
@@ -98,19 +42,18 @@
 
       // 给data每一个值都添加发布订阅的功能
       function defineReactive(data, key, val) {
-        var dep = new Dep();
+        let pubsubBox = new Pubsub();
         // 如果传入value是对象或者数组递归
         observe(val);
         Object.defineProperty(data, key, {
           get: function () {
-            Dep.target && dep.subscribe(Dep.target);
-            // console.log(dep.subs);
+            Pubsub.target && pubsubBox.subscribe(Pubsub.target);
             return val;
           },
           set: function (newVal) {
             if (newVal !== val) {
               val = newVal;
-              dep.publish();
+              pubsubBox.publish();
             } else {
               return;
             }
@@ -118,18 +61,18 @@
         });
       }
 
-      function Dep() {
+      function Pubsub() {
         this.subs = [];
       }
 
       // 订阅
-      Dep.prototype.subscribe = function (sub) {
+      Pubsub.prototype.subscribe = function (sub) {
         this.subs.push(sub);
       };
 
       // 发布
-      Dep.prototype.publish = function () {
-        this.subs.forEach((sub) => {
+      Pubsub.prototype.publish = function () {
+        this.subs.forEach((sub, index) => {
           sub.update();
         });
       };
@@ -142,28 +85,91 @@
         this.value = this.get();
       }
 
+      // 订阅
       Watcher.prototype.get = function () {
-        Dep.target = this;
-        var value = this.vm.data[this.name];
-        Dep.target = null;
+        Pubsub.target = this;
+        let value = this.vm.data[this.name];
+        Pubsub.target = null;
         return value;
       };
 
       Watcher.prototype.update = function () {
         if (this.node.nodeType === 1) {
-          this.node.nodeValue = this.get();
+          this.node.value = this.vm.data[this.name];
         } else {
           this.node.textContent = this.node.template.replace(/\{\{([^}]*)\}\}/g, (_template) => {
-            var key = _template.slice(2, _template.length - 2);
+            let key = _template.slice(2, _template.length - 2);
             return this.vm.data[key];
           });
         }
       };
 
-      var vm = new Vue({
+      // 把 #id 的所有子节点拷贝到 fragment 上
+      function nodeCopyToFragment(node, vm) {
+        // 创建一个文档碎片
+        let fragment = document.createDocumentFragment();
+        let child;
+        while ((child = node.firstChild)) {
+          // 节点的appendChild方法用于在内容末尾插入节点，如果要插入的节点 已经 在文档中则 先剪切再插入。
+          fragment.appendChild(child);
+        }
+        compileNode(fragment.childNodes, vm);
+        return fragment;
+      }
+
+      function compileNode(nodes, vm) {
+        //此处传入的nodes是一个类数组，将其转化为数组
+        Array.from(nodes).forEach((node) => {
+          compiler(node, vm);
+          // 如果node还有子节点，则继续解析
+          if (node.childNodes.length > 0) {
+            compileNode(node.childNodes, vm);
+          }
+        });
+      }
+
+      // 解析模版
+      function compiler(node, vm) {
+        // 如果是元素节点
+        if (node.nodeType === 1) {
+          // 获得元素节点上所有的属性，以键值对的方式存储在attr中，attr属于类数组
+          let attr = node.attributes;
+          Array.from(attr).forEach((element) => {
+            if (element.nodeName == 'v-model') {
+              let name = element.nodeValue;
+              // 给带有v-model指令的元素绑定input时间
+              node.addEventListener('input', function (e) {
+                vm.data[name] = e.target.value;
+              });
+              // 初始化带有v-model指令的元素的值
+              node.value = vm.data[name];
+              // 触发订阅
+              new Watcher(vm, node, name);
+            }
+          });
+        }
+        // 正则匹配到文本中有{{}}的文本
+        let reg = /\{\{([^}]*)\}\}/g;
+        let textContent = node.textContent;
+        // 如果是文本节点且文本中带有{{}}的节点
+        if (node.nodeType === 3 && reg.test(textContent)) {
+          // 将文本内容存放在当前节点的自定义属性上
+          node.template = textContent;
+          // 此处node.textContent 和 node.template的文本一样，如果上一步不将文本存储到自定义属性中，那么下次将无法匹配到{{}}。
+          node.textContent = node.template.replace(reg, (_template) => {
+            // 获取数据的key值 {{name}} ===> name
+            let key = _template.slice(2, _template.length - 2);
+            new Watcher(vm, node, key);
+            // 返回对应的值
+            return vm.data[key];
+          });
+        }
+      }
+
+      let vm = new Vue({
         el: 'app',
         data: {
-          name: '',
+          name: '1234',
           password: '',
         },
       });

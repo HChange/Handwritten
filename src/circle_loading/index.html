@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>环形进度条</title>
+<style>
+  *{
+    box-sizing: border-box;
+  }
+  .bar--circle {
+    position: relative;
+    height: 200px;
+    width: 200px;
+    border-radius: 100%;
+  }
+  .circle {
+    position: relative;
+    height: 200px;
+    width: 200px;
+    border: 12px solid #000;
+    border-radius: 50%;
+  }
+  .right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 200px;
+    overflow: hidden;
+  }
+  .circle_right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 200px;
+    width: 200px;
+    border: 12px solid transparent;
+    border-radius: 100%;
+    border-top: 12px solid #bfd1ff;
+    border-right: 12px solid #bfd1ff;
+    transform: rotate(-135deg);
+    /* background-clip: padding-box; */
+    animation: circle_right 6s linear 0s infinite;
+  }
+  .left {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100px;
+      height: 200px;
+      overflow: hidden;
+  }
+  .circle_left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 200px;
+    width: 200px;
+    border: 12px solid transparent;
+    border-left: 12px solid #bfd1ff;
+    border-bottom: 12px solid #bfd1ff;
+    border-radius: 100%;
+    transform: rotate(-135deg);
+    animation: circle_left 6s linear 0s infinite;
+  }
+
+  @keyframes circle_left{
+    0%,50% {
+      transform: rotate(-135deg);
+    }
+    100%{
+      transform: rotate(45deg);
+    }
+  }
+  @keyframes circle_right{
+    0% {
+      transform: rotate(-135deg);
+    }
+    50%,100%{
+      transform: rotate(45deg);
+    }
+  }
+
+
+
+  </style>
+  <body>
+	<div class="bar--circle">
+		<div class="circle"></div>
+		<div class="left">
+			<div class="circle_left"></div>
+		</div>
+		<div class="right">
+			<div class="circle_right"></div>
+		</div>
+	</div>
+</body>
+
+</html>

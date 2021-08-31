@@ -1,4 +1,5 @@
 import { curry } from '../index';
+import { checkType } from '../../checkType/index';
 
 const add = (a: number, b: number, c: number, d: number) => {
   return a + b + c + d;
@@ -20,8 +21,8 @@ describe('测试函数柯里化:', () => {
   });
 });
 
-// test('测试函数柯里化（checkType)：', () => {
-//   const isArray: (params: any) => boolean = curry(checkType, 'Array');
-//   expect(isArray([])).toBe(true);
-//   expect(isArray('string')).toBe(false);
-// });
+test('测试函数柯里化（checkType)：', () => {
+  const isArray: (params: any) => boolean = curry(checkType, 'Array');
+  expect(isArray([])).toBe(true);
+  expect(isArray('string')).toBe(false);
+});

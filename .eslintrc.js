@@ -5,8 +5,9 @@ module.exports = {
     browser: true,
   },
   rules: {
-    'no-console': 'warn',
-    'no-unused-vars': 'warn',
+    'no-console': 1,
+    'no-unused-vars': 1,
     'no-proto': 0,
+    'max-params': 0,
   },
 };

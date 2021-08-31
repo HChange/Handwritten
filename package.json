@@ -10,7 +10,7 @@
     "commit-msg": "commitlint -e $GIT_PARAMS",
     "lint": "eslint src/**/*.{ts,js} --fix",
     "prepare": "husky install",
-    "test": "jest"
+    "test": "jest --coverage=true"
   },
   "repository": {
     "type": "git",
